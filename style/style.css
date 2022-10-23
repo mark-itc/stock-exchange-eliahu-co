@@ -1,0 +1,35 @@
+html,
+body {
+  height: 100%;
+}
+
+.card {
+  border-radius: 50px !important;
+  color: white !important;
+}
+
+.card-header {
+  border-radius: 50px !important;
+  background-color: white !important;
+}
+
+.card-header:hover{
+    box-shadow: 1px 1px 8px 1px #0d6efd;
+}
+
+.input-group-text {
+    background-color: white !important;
+}
+
+.form-control {
+    border: 0px !important;
+}
+
+.btn-circle {
+    height: 38px;
+    width: 38px;
+    align-items: center !important;
+    justify-content:center !important;
+    border-radius: 50px !important;
+    padding: 0px !important;
+}
