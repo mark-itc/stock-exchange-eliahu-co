@@ -1,27 +1,3 @@
-// ● In the project folder, create a new file called company.html - this where your
-// browser will look for when you click a company link from the main page
-// (index.html)
-// ● In this page, you should extract the symbol string from the url (for example, if the
-// user clicked a link for /company.html?symbol=GOOG, you should have a variable in
-// your JS code with “GOOG” as a string.
-// ○ The information after the question mark in your url is called “query string”
-// (sometimes it is called “query params” or “search”, but it means the same). To
-// access it in your JavaScript you can follow this guide: Get Query String
-// Parameters with JavaScript
-
-// ● Then, get the company profile with the following endpoint: https://stock-exchange-dot-full-stack-course-services.ew.r.appspot.com/api/v3/company/profile/${symbol} 
-//where symbol is the
-// company symbol extracted from the query params
-// ● Present the company information in the screen (no design provided, go wild), with
-// the company image, name, description and link
-// ● Also, present the company stock price, and changes in percentages - if the change
-// is positive, the changes in percentages should be in light green, else in red.
-// ● After that, you should fetch the history of stock price of the company, using the
-// following endpoint: https://stock-exchange-dot-full-stack-course-
-// services.ew.r.appspot.com/api/v3/historical-price-full/${symbol}?serietype=line
-// ● Use Chart.js | Open source HTML5 Charts for your website to present this data in a
-// chart (read the documentation, understand how to use it, and how to pass the data
-// from the stock price history endpoint)
 // ● Show loading indicator, when loading company data and stock price history.
 
 let companySearcher = null;
@@ -38,27 +14,50 @@ window.onload = () => {
 
 class Company {
     constructor(companyObject) {
-       this.name = companyObject.name;
-       this.symbol = companyObject.symbol;
-       this.getCompanyData().then((result) => {
-        this.data = result;
-       });
+        this.name = companyObject.name;
+        this.symbol = companyObject.symbol;
+        this.companyData = '';
+        // this.companyLogo = this.companyData.image;
+        // this.companyChanges = this.companyData.changes;
     }
 
-    createCompanyRow() {
+    async createCompanyRow() {
+        this.companyData = await this.getCompanyData();
+        this.companyLogo = this.companyData.image;
+        this.companyChanges = this.companyData.changes;
+
+        console.log('this.companyData', this.companyData);
+
         const companyRow = document.createElement("tbody");
-        const companyTr =  document.createElement("tr");
+        const companyTr = document.createElement("tr");
+
+        const companyChanges = document.createElement("div");
+        companyChanges.innerHTML = `(${this.companyChanges}%)`;
+        companyChanges.classList = "pe-3 ps-3 ms-3 text-white rounded-2";
+        companyChanges.style = "--bs-bg-opacity: .6";
+        if (this.companyChanges >= 0) {
+            companyChanges.classList.add("bg-success");
+
+        }
+        else {
+            companyChanges.classList.add("bg-danger");
+        }
+
+        console.log(companyChanges);
 
         const companyItem = document.createElement("th");
-        companyItem.classList = "fw-normal";
-        companyItem.innerHTML = `(${this.symbol}) ${this.name}`;
+        companyItem.classList = "h5 d-flex align-items-center rounded-top";
+        companyItem.innerHTML = `<img class="logo me-4" src=${this.companyLogo}> ${this.name}  (${this.symbol})`;
+
+
         companyRow.appendChild(companyTr);
         companyTr.appendChild(companyItem);
+        companyItem.appendChild(companyChanges);
 
         companyRow.addEventListener('click', () => {
-             this.companyClicked();
-         })
-         
+            this.companyClicked();
+        })
+
         return companyRow;
     }
 
@@ -68,13 +67,16 @@ class Company {
 
     async getCompanyData() {
         try {
-            const url = 'https://stock-exchange-dot-full-stack-course-services.ew.r.appspot.com/api/v3/company/profile/' + this.symbol;
+            const url = `https://stock-exchange-dot-full-stack-course-services.ew.r.appspot.com/api/v3/company/profile/${this.symbol}`;
 
             const response = await fetch(url);
-            const results = await response.json();
-            
-            return results;
-            
+            const result = await response.json();
+
+            const companyData = result.profile;
+
+
+            return companyData;
+
         } catch (e) {
             return false;
         }
@@ -85,7 +87,7 @@ class CompanySearcher {
     constructor() {
         this.searchQuery = '';
         this.limit = 10;
-        this.exchange= 'NASDAQ';
+        this.exchange = 'NASDAQ';
 
         const searchForm = document.getElementById('search-form');
         searchForm.addEventListener('submit', (e) => {
@@ -95,23 +97,28 @@ class CompanySearcher {
     }
 
     async runSearch(e) {
-        this.searchQuery=document.getElementById('search-input').value;
+        this.searchQuery = document.getElementById('search-input').value;
         const results = await this.getCompanies();
-        
-        console.log('results',results);
+
+        console.log(results.length);
+
         resultsTable.innerHTML = ``;
 
         const companyObjects = [];
-        results.forEach((item)=>{
-            const company = new Company(item);
+        const companyRows = []
+        for (let i = 0; i < results.length; i++) {
+
+            const company = new Company(results[i]);
             companyObjects.push(company);
-            const companyTableItem = company.createCompanyRow();
+            const companyTableItem = await company.createCompanyRow();
+            companyRows.push(companyTableItem);
+        }
 
-            resultsTable.appendChild(companyTableItem);
-            // const card = movie.createMovieCard();
+        hideSpinner();
 
-            // container.appendChild(card);
-        })
+        for (let i = 0; i < companyRows.length; i++) {
+            resultsTable.appendChild(companyRows[i]);
+        }
     }
 
     async getCompanies() {
@@ -120,9 +127,6 @@ class CompanySearcher {
             const url = 'https://stock-exchange-dot-full-stack-course-services.ew.r.appspot.com/api/v3/search?query=' + this.searchQuery + '&limit=' + this.limit + '&exchange=' + this.exchange;
             const response = await fetch(url);
             const results = await response.json();
-                if (response) {
-                    hideSpinner();
-                }
             return results;
         } catch (e) {
             return [];
@@ -132,11 +136,11 @@ class CompanySearcher {
 
 
 function hideSpinner() {
-    spinner.style.display='none';
-} 
+    spinner.style.display = 'none';
+}
 
 function showSpinner() {
-    spinner.style.display='block';
-} 
+    spinner.style.display = 'block';
+}
 
 
