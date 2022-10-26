@@ -1,5 +1,3 @@
-// ● Show loading indicator, when loading company data and stock price history.
-
 let companySearcher = null;
 let spinner = null;
 let resultsTable = null;
