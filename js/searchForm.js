@@ -1,15 +1,3 @@
-let companySearcher = null;
-let spinner = null;
-let resultsTable = null;
-
-window.onload = () => {
-    spinner = document.getElementById('spinner')
-    hideSpinner();
-    resultsTable = document.getElementById('results-table');
-
-    companySearcher = new CompanySearcher();
-}
-
 class Company {
     constructor(companyObject) {
         this.name = companyObject.name;
@@ -26,6 +14,7 @@ class Company {
 
         const companyRow = document.createElement("tbody");
         const companyTr = document.createElement("tr");
+        companyTr.classList = "d-flex";
 
         const companyChanges = document.createElement("div");
         companyChanges.innerHTML = `(${this.companyChanges}%)`;
@@ -42,7 +31,7 @@ class Company {
         console.log(companyChanges);
 
         const companyItem = document.createElement("th");
-        companyItem.classList = "h5 d-flex align-items-center rounded-top";
+        companyItem.classList = "h5 d-flex align-items-center rounded-top mb-2 col-md-10 col-lg-8 col-xl-7 mx-auto";
         companyItem.innerHTML = `<img class="logo me-4" src=${this.companyLogo}> ${this.name}  (${this.symbol})`;
 
 
@@ -50,7 +39,7 @@ class Company {
         companyTr.appendChild(companyItem);
         companyItem.appendChild(companyChanges);
 
-        companyRow.addEventListener('click', () => {
+        companyTr.addEventListener('click', () => {
             this.companyClicked();
         })
 
@@ -80,16 +69,51 @@ class Company {
 }
 
 class CompanySearcher {
-    constructor() {
+    constructor(container) {
         this.searchQuery = '';
         this.limit = 10;
         this.exchange = 'NASDAQ';
+        this.container = container;
+    }
+    printForm() {
+        const form = this.container;
+        form.classList="card text-bg-light border-primary mb-2 col-md-10 col-lg-8 col-xl-7 mx-auto justify-content-center";
 
-        const searchForm = document.getElementById('search-form');
+        const cardHeader = document.createElement("div");
+        cardHeader.classList = "card-header";
+        
+        const searchForm = document.createElement("form");
+        searchForm.classList = "input-group input-group-lg";
+
         searchForm.addEventListener('submit', (e) => {
             e.preventDefault();
             this.runSearch();
-        })
+         })
+        
+        const formInput = document.createElement("input");
+        formInput.classList = "form-control form-control-lg rounded shadow-none"
+        formInput.setAttribute("type", "text");
+        formInput.setAttribute("id", "search-input");
+        formInput.setAttribute("placeholder", "Search for company");
+        
+        this.spinner = document.createElement("div");
+        this.spinner.classList = "spinner-border text-primary spinner-border-sm";
+        this.spinner.setAttribute("role", "status");
+        this.spinner.style.display = 'none'
+        
+        const searchButton = document.createElement("button");
+        searchButton.classList = "btn btn-primary btn-circle";
+        searchButton.setAttribute("type", "submit");
+
+        const searchIcon = document.createElement("i");
+        searchIcon.classList = "fa-solid fa-magnifying-glass";
+
+        form.appendChild(cardHeader);
+        cardHeader.appendChild(searchForm);
+        searchForm.appendChild(formInput);
+        searchForm.appendChild(this.spinner);
+        searchForm.appendChild(searchButton);
+        searchButton.appendChild(searchIcon);
     }
 
     async runSearch(e) {
@@ -98,19 +122,20 @@ class CompanySearcher {
 
         console.log(results.length);
 
+        const resultsTable = document.getElementById('results-table');
         resultsTable.innerHTML = ``;
 
         const companyObjects = [];
-        const companyRows = []
-        for (let i = 0; i < results.length; i++) {
+        const companyRows = [];
 
+        for (let i = 0; i < results.length; i++) {
             const company = new Company(results[i]);
             companyObjects.push(company);
             const companyTableItem = await company.createCompanyRow();
             companyRows.push(companyTableItem);
         }
 
-        hideSpinner();
+        this.hideSpinner();
 
         for (let i = 0; i < companyRows.length; i++) {
             resultsTable.appendChild(companyRows[i]);
@@ -118,7 +143,7 @@ class CompanySearcher {
     }
 
     async getCompanies() {
-        showSpinner();
+        this.showSpinner();
         try {
             const url = 'https://stock-exchange-dot-full-stack-course-services.ew.r.appspot.com/api/v3/search?query=' + this.searchQuery + '&limit=' + this.limit + '&exchange=' + this.exchange;
             const response = await fetch(url);
@@ -128,15 +153,15 @@ class CompanySearcher {
             return [];
         }
     }
-}
 
-
-function hideSpinner() {
-    spinner.style.display = 'none';
-}
-
-function showSpinner() {
-    spinner.style.display = 'block';
+    hideSpinner() {
+        this.spinner.style.display = 'none';
+    }
+    
+    showSpinner() {
+        this.spinner.style.display = 'block';
+    }
+    
 }
 
 

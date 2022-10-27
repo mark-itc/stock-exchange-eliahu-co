@@ -1,14 +1,18 @@
 class Marquee {
-    constructor(number) {
-        this.limit = number;
+    constructor(container) {
+        this.limit = 25;
         this.exchange = 'NASDAQ';
+        this.container = container;
     }
 
     async printMarquee() {
         const marqueeData = await this.getCompanyAndStockPrice();
-        marqueeData.forEach((item)=>{
-            const marquee = document.getElementById("marqueeSpan"); 
+        
+        const marquee = document.createElement("div");
+        marquee.classList = "marquee__inner d-flex bg-primary";
 
+        marqueeData.forEach((item)=>{
+            
             const companyWrapper = document.createElement("span");
             companyWrapper.classList = "d-flex ms-2 me-2 h6";
             companyWrapper.style = "cursor: pointer;";
@@ -21,6 +25,7 @@ class Marquee {
             marqueePrice.innerHTML = `$${item.price}`;
             marqueePrice.classList = "ms-1 me-1 text-white";
 
+           this.container.appendChild(marquee);
             marquee.appendChild(companyWrapper);
             companyWrapper.appendChild(marqueeSymbol);
             companyWrapper.appendChild(marqueePrice);
@@ -42,6 +47,3 @@ class Marquee {
         }
     }
 }
-
-const marqueeTop = new Marquee(25);
-marqueeTop.printMarquee();

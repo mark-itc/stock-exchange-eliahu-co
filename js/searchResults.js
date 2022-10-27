@@ -1,40 +1,19 @@
-let companyName = null;
-let companyLogo = null;
-let companyPrice = null;
-let companyChanges = null;
-let companyDescription = null;
-
-
-const parameters = new URLSearchParams(location.search);
-const symbol = parameters.get('symbol')
-
-
-window.onload = () => {
-    companyName = document.getElementById('company-name');
-    companyLogo = document.getElementById('company-logo');
-    companyPrice = document.getElementById('company-price');
-    companyChanges = document.getElementById('company-changes');
-    companyDescription = document.getElementById('company-description');
-
-
-    const thisCompany = new CompanyResult();
-
-
-}
+const params = new URLSearchParams(location.search);
+const symbol = params.get('symbol')
 
 class CompanyResult {
-    constructor() {
+    constructor(location) {
         this.getCompanyData().then((companyData) => {
             this.companyLogo = companyData.image;
             this.companyName = companyData.companyName;
             this.companyPrice = companyData.price;
             this.companyChanges = companyData.changes;
             this.companyDescription = companyData.description;
+            this.location = location;
             this.page = this.printInfo();
         });
         this.getPriceHistory().then((priceHistory) => {
             this.priceHistory = priceHistory;
-            console.log(this.priceHistory);
             this.chart = this.createChart(this.priceHistory);
         })
 
@@ -58,19 +37,69 @@ class CompanyResult {
 
     printInfo() {
 
-        companyLogo.innerHTML = `<img class=logo src=${this.companyLogo}>`;
-        companyName.innerHTML = this.companyName;
-        companyPrice.innerHTML = `Stock price: ${this.companyPrice}`;
+        const companyRowName = document.createElement("tbody");
+        const companyTrName = document.createElement("tr");
+        const companyItemName = document.createElement("th");
+
+        const backButton = document.createElement("button");
+        backButton.classList = "btn btn-primary ms-5";
+        backButton.style.backgroundColor = "#0D6EFD"
+        backButton.setAttribute("type", "button");
+        backButton.innerHTML = "Return"
+
+        backButton.addEventListener('click', () => {
+            window.location = './index.html'
+        });
+
+        companyTrName.classList = "d-flex";
+        
+        companyItemName.classList = "h4 d-flex align-items-center mb-2 col-md-10 col-lg-8 col-xl-7 mx-auto";
+        companyItemName.innerHTML = `<img class="logo me-4" src=${this.companyLogo}> ${this.companyName} (${symbol})`;
+
+        console.log(companyRowName);
+
+        this.location.appendChild(companyRowName);
+        companyRowName.appendChild(companyTrName);
+        companyItemName.appendChild(backButton);
+        companyTrName.appendChild(companyItemName);
+        
+        const companyRowPrice = document.createElement("tbody");
+        const companyTrPrice = document.createElement("tr");
+        companyTrPrice.classList = "d-flex";
+        const companyItemPrice = document.createElement("th");
+        companyItemPrice.classList = "h6 fw-bold d-flex align-items-center rounded-top mb-2 col-md-10 col-lg-8 col-xl-7 mx-auto";
+        companyItemPrice.innerHTML = `Stock price: $${this.companyPrice}`;
+        const companyChanges = document.createElement("div");
         companyChanges.innerHTML = `(${this.companyChanges}%)`;
+        companyChanges.classList = "pe-3 ps-3 ms-3 text-white rounded-2";
+        companyChanges.style = "--bs-bg-opacity: .6";
         if (this.companyChanges >= 0) {
-            companyChanges.style.color = "green";
+            companyChanges.classList.add("bg-success");
+
         }
         else {
-            companyChanges.style.color = "red";
+            companyChanges.classList.add("bg-danger");
         }
-        companyDescription.innerHTML = this.companyDescription;
-    }
 
+        this.location.appendChild(companyRowPrice);
+        companyRowPrice.appendChild(companyTrPrice);
+        companyTrPrice.appendChild(companyItemPrice);
+        companyItemPrice.appendChild(companyChanges);
+
+        const companyRowDesc = document.createElement("tbody");
+        const companyTrDesc = document.createElement("tr");
+        companyTrDesc.classList = "d-flex";
+        const companyItemDesc = document.createElement("th");
+        companyItemDesc.classList = "h6 d-flex align-items-center rounded-top mb-2 col-md-10 col-lg-8 col-xl-7 mx-auto";
+        companyItemDesc.innerHTML = `${this.companyDescription}`;
+
+        this.location.appendChild(companyRowDesc);
+        companyRowDesc.appendChild(companyTrDesc);
+        companyTrDesc.appendChild(companyItemDesc);
+
+        console.log(companyRowName);
+
+    }
 
     async getPriceHistory() {
         const url = `https://stock-exchange-dot-full-stack-course-services.ew.r.appspot.com/api/v3/historical-price-full/${symbol}?serietype=line`;
