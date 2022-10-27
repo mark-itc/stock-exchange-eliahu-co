@@ -10,8 +10,6 @@ class Company {
         this.companyLogo = this.companyData.image;
         this.companyChanges = this.companyData.changes;
 
-        console.log('this.companyData', this.companyData);
-
         const companyRow = document.createElement("tbody");
         const companyTr = document.createElement("tr");
         companyTr.classList = "d-flex";
@@ -28,11 +26,11 @@ class Company {
             companyChanges.classList.add("bg-danger");
         }
 
-        console.log(companyChanges);
 
         const companyItem = document.createElement("th");
         companyItem.classList = "h5 d-flex align-items-center rounded-top mb-2 col-md-10 col-lg-8 col-xl-7 mx-auto";
-        companyItem.innerHTML = `<img class="logo me-4" src=${this.companyLogo}> ${this.name}  (${this.symbol})`;
+        companyItem.innerHTML = `<img class="logo me-4" src=${this.companyLogo}><span id="textResult"> ${this.name}  (${this.symbol})</span>`;
+
 
 
         companyRow.appendChild(companyTr);
@@ -45,6 +43,7 @@ class Company {
 
         return companyRow;
     }
+
 
     async companyClicked() {
         window.open(`./company.html?symbol=${this.symbol}`, '_blank').focus();
@@ -77,30 +76,30 @@ class CompanySearcher {
     }
     printForm() {
         const form = this.container;
-        form.classList="card text-bg-light border-primary mb-2 col-md-10 col-lg-8 col-xl-7 mx-auto justify-content-center";
+        form.classList = "card text-bg-light border-primary mb-2 col-md-10 col-lg-8 col-xl-7 mx-auto justify-content-center";
 
         const cardHeader = document.createElement("div");
         cardHeader.classList = "card-header";
-        
+
         const searchForm = document.createElement("form");
-        searchForm.classList = "input-group input-group-lg";
+        searchForm.classList = "input-group input-group-lg align-items-center";
 
         searchForm.addEventListener('submit', (e) => {
             e.preventDefault();
             this.runSearch();
-         })
-        
+        })
+
         const formInput = document.createElement("input");
         formInput.classList = "form-control form-control-lg rounded shadow-none"
         formInput.setAttribute("type", "text");
         formInput.setAttribute("id", "search-input");
         formInput.setAttribute("placeholder", "Search for company");
-        
+
         this.spinner = document.createElement("div");
         this.spinner.classList = "spinner-border text-primary spinner-border-sm";
         this.spinner.setAttribute("role", "status");
         this.spinner.style.display = 'none'
-        
+
         const searchButton = document.createElement("button");
         searchButton.classList = "btn btn-primary btn-circle";
         searchButton.setAttribute("type", "submit");
@@ -120,8 +119,6 @@ class CompanySearcher {
         this.searchQuery = document.getElementById('search-input').value;
         const results = await this.getCompanies();
 
-        console.log(results.length);
-
         const resultsTable = document.getElementById('results-table');
         resultsTable.innerHTML = ``;
 
@@ -140,6 +137,21 @@ class CompanySearcher {
         for (let i = 0; i < companyRows.length; i++) {
             resultsTable.appendChild(companyRows[i]);
         }
+
+        const textResult = document.querySelectorAll("#textResult")
+
+        for (let i = 0; i < textResult.length; i++) {
+            this.highlightQuery(this.searchQuery, textResult[i])
+        }
+    }
+
+    async highlightQuery(search, result) {
+        var innerText = result.innerHTML;
+        var index = innerText.toUpperCase().indexOf(search.toUpperCase());
+        if (index >= 0) {
+            innerText = innerText.substring(0, index) + "<span class='text-bg-warning'>" + innerText.substring(index, index + search.length) + "</span>" + innerText.substring(index + search.length);
+            result.innerHTML = innerText;
+        }
     }
 
     async getCompanies() {
@@ -157,11 +169,11 @@ class CompanySearcher {
     hideSpinner() {
         this.spinner.style.display = 'none';
     }
-    
+
     showSpinner() {
         this.spinner.style.display = 'block';
     }
-    
+
 }
 
 

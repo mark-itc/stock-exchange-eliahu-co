@@ -42,7 +42,7 @@ class CompanyResult {
         const companyItemName = document.createElement("th");
 
         const backButton = document.createElement("button");
-        backButton.classList = "btn btn-primary ms-5";
+        backButton.classList = "btn btn-primary ms-5 float-end";
         backButton.style.backgroundColor = "#0D6EFD"
         backButton.setAttribute("type", "button");
         backButton.innerHTML = "Return"
@@ -52,17 +52,15 @@ class CompanyResult {
         });
 
         companyTrName.classList = "d-flex";
-        
-        companyItemName.classList = "h4 d-flex align-items-center mb-2 col-md-10 col-lg-8 col-xl-7 mx-auto";
-        companyItemName.innerHTML = `<img class="logo me-4" src=${this.companyLogo}> ${this.companyName} (${symbol})`;
 
-        console.log(companyRowName);
+        companyItemName.classList = "h4 align-items-center mb-2 col-md-10 col-lg-8 col-xl-7 mx-auto";
+        companyItemName.innerHTML = `<img class="logo me-4" src=${this.companyLogo}> ${this.companyName} (${symbol})`;
 
         this.location.appendChild(companyRowName);
         companyRowName.appendChild(companyTrName);
         companyItemName.appendChild(backButton);
         companyTrName.appendChild(companyItemName);
-        
+
         const companyRowPrice = document.createElement("tbody");
         const companyTrPrice = document.createElement("tr");
         companyTrPrice.classList = "d-flex";
@@ -96,9 +94,6 @@ class CompanyResult {
         this.location.appendChild(companyRowDesc);
         companyRowDesc.appendChild(companyTrDesc);
         companyTrDesc.appendChild(companyItemDesc);
-
-        console.log(companyRowName);
-
     }
 
     async getPriceHistory() {

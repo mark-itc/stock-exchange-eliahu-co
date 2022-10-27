@@ -1,6 +1,6 @@
 html,
 body {
-  height: 100vh;
+  height: 100%;
 }
 
 .card {
@@ -9,30 +9,29 @@ body {
 }
 
 .card-header {
-  height:60px;
   border-radius: 50px !important;
   background-color: white !important;
 }
 
-.card-header:hover{
-    box-shadow: 1px 1px 8px 1px #0d6efd;
+.card-header:hover {
+  box-shadow: 1px 1px 8px 1px #0d6efd;
 }
 
 .input-group-text {
-    background-color: white !important;
+  background-color: white !important;
 }
 
 .form-control {
-    border: 0px !important;
+  border: 0px !important;
 }
 
 .btn-circle {
-    height: 38px;
-    width: 38px;
-    align-items: center !important;
-    justify-content:center !important;
-    border-radius: 50px !important;
-    padding: 0px !important;
+  height: 38px;
+  width: 38px;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50px !important;
+  padding: 0px !important;
 }
 
 .spinner-border {
@@ -40,7 +39,8 @@ body {
   border-radius: 50% !important;
 }
 
-.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+.table-hover tbody tr:hover td,
+.table-hover tbody tr:hover th {
   background-color: #98C1FE;
   cursor: pointer;
 }
@@ -76,10 +76,10 @@ body {
 
 @keyframes marquee {
   0% {
-      transform: translate3d(var(--move-initial), 0, 0);
+    transform: translate3d(var(--move-initial), 0, 0);
   }
 
   100% {
-      transform: translate3d(var(--move-final), 0, 0);
+    transform: translate3d(var(--move-final), 0, 0);
   }
 }
