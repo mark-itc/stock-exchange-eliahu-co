@@ -1,0 +1,85 @@
+html,
+body {
+  height: 100%;
+}
+
+.card {
+  border-radius: 50px !important;
+  color: white !important;
+}
+
+.card-header {
+  border-radius: 50px !important;
+  background-color: white !important;
+}
+
+.card-header:hover {
+  box-shadow: 1px 1px 8px 1px #0d6efd;
+}
+
+.input-group-text {
+  background-color: white !important;
+}
+
+.form-control {
+  border: 0px !important;
+}
+
+.btn-circle {
+  height: 38px;
+  width: 38px;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50px !important;
+  padding: 0px !important;
+}
+
+.spinner-border {
+  margin: 10px !important;
+  border-radius: 50% !important;
+}
+
+.table-hover tbody tr:hover td,
+.table-hover tbody tr:hover th {
+  background-color: #98C1FE;
+  cursor: pointer;
+}
+
+.table {
+  border-bottom-color: #0d6efd !important;
+}
+
+.logo {
+  height: 38px;
+}
+
+.marquee {
+  position: relative;
+  overflow: hidden;
+  --offset: 20vw;
+  --move-initial: calc(-25% + var(--offset));
+  --move-final: calc(-50% + var(--offset));
+}
+
+.marquee__inner {
+  width: fit-content;
+  display: flex;
+  position: relative;
+  transform: translate3d(var(--move-initial), 0, 0);
+  animation: marquee 5s linear infinite;
+  animation-play-state: running;
+}
+
+.marquee:hover .marquee__inner {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate3d(var(--move-initial), 0, 0);
+  }
+
+  100% {
+    transform: translate3d(var(--move-final), 0, 0);
+  }
+}
